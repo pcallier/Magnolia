@@ -45,6 +45,7 @@ class LmfIterator:
         self.spectrograms = spectrograms
         self.transform_which = transform_which
         self.diff_features = diff_features
+        self.fft_type = fft_type
 
     def __next__(self):
         spectrograms = next(self.spectrograms)
