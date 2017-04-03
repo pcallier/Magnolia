@@ -78,7 +78,6 @@ class LmfIterator:
         # if there are other dimensions
         if spec_dim > 2:
             new_shape = [*range(2,spec_dim), 0, 1]
-            print(new_shape)
             spectrogram = np.transpose(spectrogram, new_shape)
         # freely adapted from python_speech_features logfbank
         fb = psf.get_filterbanks(self.num_filters,
@@ -93,7 +92,6 @@ class LmfIterator:
         # Move time and frequency back to the start of the dim list
         if spec_dim > 2:
             old_shape = [spec_dim-2, spec_dim-1, *list(range(spec_dim-2))]
-            print(old_shape)
             log_energies = np.transpose(log_energies, old_shape)
 
         # get diff features
