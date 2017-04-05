@@ -7,13 +7,43 @@ import h5py
 import numpy as np
 import soundfile as sf
 from scipy.signal import resample_poly
-from magnolia.features.spectral_features import stft, istft
 from python_speech_features.sigproc import preemphasis
+from .spectral_features import stft, istft
+
+def undo_preemphasis(preemphasized_signal,coeff=0.95):
+    """
+    Function to undo the preemphasis of an input signal. The preemphasised
+    signal p is computed from the signal s by the relation
+                    p(n) = s(n) - coeff*s(n-1)
+    with p(0) = s(0).  The inverse operation constructs the signal from the
+    preemphasized signal with the recursion relation
+                    s(n) = p(n) + coeff*s(n-1)
+
+    Inputs:
+        preemphasized_signal:  numpy array containing preemphasised signal
+        coeff:   coefficient used to compute the preemphasized signal
+
+    Returns:
+        signal: numpy array containing the signal without preemphasis
+    """
+
+    # Get the length of the input and preallocate the output array
+    length = preemphasized_signal.shape[0]
+    signal = np.zeros(length)
+
+    # Set the initial element of the signal
+    signal[0] = preemphasized_signal[0]
+
+    # Use the recursion relation to compute the output signal
+    for i in range(1,length):
+        signal[i] = preemphasized_signal[i] + coeff*signal[i-1]
+
+    return signal
 
 def make_stft_features(signal, sample_rate,
                        output_sample_rate=1e4,
                        window_size=0.05, overlap=0.025,
-                       preemphasis_coeff=0.95, fft_size=0.0512):
+                       preemphasis_coeff=0.95, fft_size=512):
     '''
     Function to take in a signal, resample it to output_sample_rate,
     normalize it, and compute the magnitude spectrogram.
@@ -52,7 +82,7 @@ def make_stft_dataset(data_dir, key_level, file_type, output_file,
                       output_sample_rate=1e4,
                       window_size=0.05, overlap=0.025,
                       preemphasis_coeff=0.95,
-                      track=None, fft_size=0.0512):
+                      track=None, fft_size=512):
     '''
     Function to walk through a data directory data_dir and compute the stft
     features for each file of type file_type.  The computed features are
