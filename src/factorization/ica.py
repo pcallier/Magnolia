@@ -78,6 +78,7 @@ def kt_ica(X, num_srcs=2, num_shifts=5, sigdim=0):
         np.sum(np.abs(reconstructed),axis=(1,2))))
     # Reconstruct sources, accounting for original artificial lags
     # source images = what the microphones heard
+    # (reduce 2nd dimension from num_signals*num_lags to num_signals)
     src_imgs_est = np.zeros((num_srcs, num_signals, num_samples), dtype=shifted_obs.dtype)
     for clus in range(num_srcs):
         for lag in range(num_shifts):
