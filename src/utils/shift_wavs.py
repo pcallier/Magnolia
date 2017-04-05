@@ -10,6 +10,8 @@ def shift_signal(sig1, sig2):
     """
     logger = logging.getLogger(__name__)
     # Get cross-correlation
+    logger.debug(sig1.shape)
+    logger.debug(sig2.shape)
     xc = fftconvolve(sig1, sig2[::-1], mode='full')
     xaxis=np.arange(-len(sig1)+1,len(sig2))
     logger.info(xaxis.shape)
